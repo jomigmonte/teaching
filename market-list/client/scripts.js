@@ -65,7 +65,6 @@ const insertButton = (parent) => {
   parent.appendChild(span);
 }
 
-
 /*
   --------------------------------------------------------------------------------------
   Função para remover um item da lista de acordo com o click no botão close
@@ -86,6 +85,66 @@ const removeElement = () => {
       }
     }
   }
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para criar um botao para editar cada item da lista
+  --------------------------------------------------------------------------------------
+*/
+const insertEditButton = (parent) => {
+  let span = document.createElement("span");
+  let txt = document.createTextNode("Editar");
+  span.className = "edit";
+  span.appendChild(txt);
+  parent.appendChild(span);
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para editar um item da lista de acordo com o click no botão edit
+  --------------------------------------------------------------------------------------
+*/
+const editElement = () => {
+  let edit = document.getElementsByClassName("edit");
+  let i;
+  for (i = 0; i < edit.length; i++) {
+    //fazer mudanças necessárias
+    edit[i].onclick = function () {
+      editForm()
+      let div = this.parentElement.parentElement;
+      const nomeItem = div.getElementsByTagName('td')[0].innerHTML
+      if (confirm("Você tem certeza?")) {
+        editItem(nomeItem)
+        alert("Atualizado!")
+      }
+    }
+  }
+}
+
+const editForm =() => {
+  //terminar
+  const formData = new FormData();
+  formData.append('nome', inputProduct);
+  formData.append('quantidade', inputQuantity);
+  formData.append('valor', inputPrice);
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para atualizar um item da lista do servidor via requisição PUT
+  --------------------------------------------------------------------------------------
+*/
+const editItem = (item) => {
+  console.log(item)
+  let url = 'http://127.0.0.1:5000/produto?nome=' + item;
+  fetch(url, {
+    method: 'put'
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 
 /*
@@ -144,6 +203,8 @@ const insertList = (nameProduct, quantity, price) => {
   document.getElementById("newInput").value = "";
   document.getElementById("newQuantity").value = "";
   document.getElementById("newPrice").value = "";
+  insertEditButton(row.insertCell(-1))
 
   removeElement()
+  editElement()
 }

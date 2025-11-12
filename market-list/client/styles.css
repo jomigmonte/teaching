@@ -102,6 +102,11 @@ header {
     font-weight: bolder;
 }
 
+.edit:hover {
+    color: #e1ec1d;
+    font-weight: bolder;
+}
+
 table,
 th,
 td {
