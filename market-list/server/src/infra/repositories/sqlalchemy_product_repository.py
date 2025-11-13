@@ -38,6 +38,26 @@ class SqlAlchemyProductRepository(ProductRepository):
         finally:
             session.close()
 
+    def update(self, oldName: str, product: Product) -> Product:
+        session = self._session_factory()
+        try:
+            model = session.query(ProductModel).filter_by(nome=oldName).first()
+            model.nome = product.nome
+            model.quantidade = product.quantidade
+            model.valor = product.valor
+            model.data_insercao = product.data_insercao
+            session.commit()
+            session.refresh(model)
+            return product_mapper.to_domain(model)
+        except IntegrityError:
+            session.rollback()
+            raise
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
     def list_all(self) -> List[Product]:
         session = self._session_factory()
         try:

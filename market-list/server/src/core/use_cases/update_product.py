@@ -19,4 +19,4 @@ class UpdateProductUseCase(UseCase):
             raise ProductNotFound(f"Produto '{nomeAntigo}' não encontrado.")
 
         product = Product(nome=nome, quantidade=quantidade, valor=valor)
-        return self._repository.update(product)
+        return self._repository.update(nomeAntigo, product)

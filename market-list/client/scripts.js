@@ -112,7 +112,10 @@ const editElement = () => {
     edit[i].onclick = function () {
       let div = this.parentElement.parentElement;
       const nomeItem = div.getElementsByTagName('td')[0].innerHTML
-      editForm(nomeItem)
+      const newProduct = editForm(nomeItem)
+      div.getElementsByTagName('td')[0].innerHTML = newProduct[0]
+      div.getElementsByTagName('td')[1].innerHTML = newProduct[1]
+      div.getElementsByTagName('td')[2].innerHTML = newProduct[2]
     }
   }
 }
@@ -134,6 +137,7 @@ const editForm =(nomeItem) => {
   } else {
     editItem(nomeItem, inputProduct, inputQuantity, inputPrice)
     alert("Item atualizado!")
+    return [inputProduct, inputQuantity, inputPrice]
   }
 }
 
@@ -144,12 +148,12 @@ const editForm =(nomeItem) => {
 */
 const editItem = async (nomeItem, inputProduct, inputQuantity, inputPrice) => {
   const formData = new FormData();
-    formData.append('nomeAntigo', nomeItem);
+  formData.append('nomeAntigo', nomeItem);
   formData.append('nome', inputProduct);
   formData.append('quantidade', inputQuantity);
   formData.append('valor', inputPrice);
 
-  let url = 'http://127.0.0.1:5000/produto?nome=' + nomeItem;
+  let url = 'http://127.0.0.1:5000/produto';
   fetch(url, {
     method: 'put',
     body: formData
