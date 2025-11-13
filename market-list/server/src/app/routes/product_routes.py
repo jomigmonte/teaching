@@ -8,12 +8,14 @@ from src.app.schemas import (
     ProdutoBuscaSchema,
     ProdutoDelSchema,
     ProdutoSchema,
+    ProdutoUpdateSchema,
     ProdutoViewSchema,
     apresenta_produto,
     apresenta_produtos,
 )
 from src.core.exceptions import ProductAlreadyExists, ProductNotFound
 from src.core.use_cases.add_product import AddProductUseCase
+from src.core.use_cases.update_product import UpdateProductUseCase
 from src.core.use_cases.delete_product import DeleteProductUseCase
 from src.core.use_cases.get_product import GetProductUseCase
 from src.core.use_cases.list_products import ListProductsUseCase
@@ -29,6 +31,7 @@ def register_product_routes(
     add_use_case: AddProductUseCase,
     list_use_case: ListProductsUseCase,
     get_use_case: GetProductUseCase,
+    update_use_case: UpdateProductUseCase,
     delete_use_case: DeleteProductUseCase,
 ) -> None:
     @app.post(
@@ -73,6 +76,22 @@ def register_product_routes(
             return apresenta_produto(produto), 200
         except ProductNotFound as error:
             return {"mesage": str(error)}, 404
+        
+    @app.put(
+        "/produto",
+        tags=[produto_tag],
+        responses={"200": ProdutoViewSchema, "404": ErrorSchema},
+    )
+    def update_produto(form: ProdutoUpdateSchema):
+        try:
+            produto = update_use_case.execute(
+                form.nomeAntigo, form.nome, form.quantidade, form.valor
+            )
+            return apresenta_produto(produto), 200
+        except ProductNotFound as error:
+            return {"mesage": str(error)}, 409
+        except Exception:
+            return {"mesage": "Não foi possível atualizar novo item :/"}, 400
 
     @app.delete(
         "/produto",

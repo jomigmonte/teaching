@@ -110,9 +110,9 @@ const editElement = () => {
   let i;
   for (i = 0; i < edit.length; i++) {
     edit[i].onclick = function () {
-      editForm()
       let div = this.parentElement.parentElement;
       const nomeItem = div.getElementsByTagName('td')[0].innerHTML
+      editForm(nomeItem)
     }
   }
 }
@@ -122,7 +122,7 @@ const editElement = () => {
   Função para receber os novos valores do item a ser atualizado
   --------------------------------------------------------------------------------------
 */
-const editForm =() => {
+const editForm =(nomeItem) => {
   let inputProduct = prompt("Novo nome:");
   let inputQuantity = Number(prompt("Nova quantidade:"));
   let inputPrice = Number(prompt("Novo preço:"));
@@ -132,7 +132,7 @@ const editForm =() => {
   } else if (isNaN(inputQuantity) || isNaN(inputPrice)) {
     alert("Quantidade e valor precisam ser números!");
   } else {
-    editItem(inputProduct, inputQuantity, inputPrice)
+    editItem(nomeItem, inputProduct, inputQuantity, inputPrice)
     alert("Item atualizado!")
   }
 }
@@ -142,13 +142,14 @@ const editForm =() => {
   Função para atualizar um item da lista do servidor via requisição PUT
   --------------------------------------------------------------------------------------
 */
-const editItem = async (inputProduct, inputQuantity, inputPrice) => {
+const editItem = async (nomeItem, inputProduct, inputQuantity, inputPrice) => {
   const formData = new FormData();
+    formData.append('nomeAntigo', nomeItem);
   formData.append('nome', inputProduct);
   formData.append('quantidade', inputQuantity);
   formData.append('valor', inputPrice);
 
-  let url = 'http://127.0.0.1:5000/produto';
+  let url = 'http://127.0.0.1:5000/produto?nome=' + nomeItem;
   fetch(url, {
     method: 'put',
     body: formData
